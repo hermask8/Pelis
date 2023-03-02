@@ -121,5 +121,104 @@ namespace ClasificacionPeliculas.Controllers
             _moviesContext.SaveChanges();
             return RedirectToAction("Index");
         }
+
+
+
+
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            MoviesContext _moviesContext = new MoviesContext();
+            Models.Moviescategory moviescategory = _moviesContext.Moviescategories.FirstOrDefault(s => s.Id == id);
+            ClasificacionPeliculasModel.Moviescategory CPMmoviescategory = new ClasificacionPeliculasModel.Moviescategory
+            {
+                CategoryId = moviescategory.CategoryId,
+                MovieId = moviescategory.MovieId,
+                Id = moviescategory.Id
+            };
+
+            IEnumerable<ClasificacionPeliculasModel.Movie> movies = (from mc in _moviesContext.Movies
+                                                                     select new ClasificacionPeliculasModel.Movie
+                                                                     {
+                                                                         Id = mc.Id,
+                                                                         Title = mc.Title,
+                                                                     }).ToList();
+            IEnumerable<ClasificacionPeliculasModel.Category> categories = (from c in _moviesContext.Categories
+                                                                            select new ClasificacionPeliculasModel.Category
+                                                                            {
+                                                                                Id = c.Id,
+                                                                                Name = c.Name
+                                                                            }).ToList();
+
+            //ClasificacionPeliculasModel.Moviescategory moviescategory = new ClasificacionPeliculasModel.Moviescategory();
+            CPMmoviescategory.Categories = categories.Select(s => new SelectListItem()
+            {
+                Value = s.Id.ToString(),
+                Text = s.Name,
+                Selected = (s.Id == CPMmoviescategory.CategoryId)
+            }).ToList();
+            CPMmoviescategory.Movies = movies.Select(s => new SelectListItem()
+            {
+                Value = s.Id.ToString(),
+                Text = s.Title,
+                Selected = (s.Id == CPMmoviescategory.MovieId)
+            }).ToList();
+            return View(CPMmoviescategory);
+        }
+
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            MoviesContext _moviesContext = new MoviesContext();
+            Models.Moviescategory moviescategory = _moviesContext.Moviescategories.FirstOrDefault(s => s.Id == id);
+            ClasificacionPeliculasModel.Moviescategory CPMmoviescategory = new ClasificacionPeliculasModel.Moviescategory
+            {
+                CategoryId = moviescategory.CategoryId,
+                MovieId = moviescategory.MovieId,
+                Id = moviescategory.Id
+            };
+
+            IEnumerable<ClasificacionPeliculasModel.Movie> movies = (from mc in _moviesContext.Movies
+                                                                     select new ClasificacionPeliculasModel.Movie
+                                                                     {
+                                                                         Id = mc.Id,
+                                                                         Title = mc.Title,
+                                                                     }).ToList();
+            IEnumerable<ClasificacionPeliculasModel.Category> categories = (from c in _moviesContext.Categories
+                                                                            select new ClasificacionPeliculasModel.Category
+                                                                            {
+                                                                                Id = c.Id,
+                                                                                Name = c.Name
+                                                                            }).ToList();
+
+            //ClasificacionPeliculasModel.Moviescategory moviescategory = new ClasificacionPeliculasModel.Moviescategory();
+            CPMmoviescategory.Categories = categories.Select(s => new SelectListItem()
+            {
+                Value = s.Id.ToString(),
+                Text = s.Name,
+                Selected = (s.Id == CPMmoviescategory.CategoryId)
+            }).ToList();
+            CPMmoviescategory.Movies = movies.Select(s => new SelectListItem()
+            {
+                Value = s.Id.ToString(),
+                Text = s.Title,
+                Selected = (s.Id == CPMmoviescategory.MovieId)
+            }).ToList();
+            return View(CPMmoviescategory);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int id, int MovieId, int CategoryId)
+        {
+            MoviesContext _moviesContext = new MoviesContext();
+            Models.Moviescategory moviescategory = _moviesContext.Moviescategories.FirstOrDefault(s => s.Id == id);
+            moviescategory.CategoryId = CategoryId;
+            moviescategory.MovieId = MovieId;
+            _moviesContext.Moviescategories.Remove(moviescategory);
+            _moviesContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }
